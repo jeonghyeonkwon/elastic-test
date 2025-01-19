@@ -1,0 +1,14 @@
+{
+  "name": "front-end",
+  "version": "1.0.0",
+  "main": "./src/index.js",
+  "scripts": {
+    "start": "serve"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "serve": "^14.2.4"
+  }
+}
