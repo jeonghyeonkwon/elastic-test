@@ -14,16 +14,21 @@ public class LogEntity {
     private String remoteAddr;
     private String remoteUser;
     private String timeLocal;
+    @Lob
     private String request;
     private String status;
     private String bytesSent;
     private String httpReferer;
     private String httpUserAgent;
-    private String httpXForwardedFor;
 
-    protected LogEntity(){}
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "chunk_pk")
+    private ChunkEntity chunkEntity;
 
-    public LogEntity(String remoteAddr, String remoteUser, String timeLocal, String request, String status, String bytesSent, String httpReferer, String httpUserAgent, String httpXForwardedFor) {
+    protected LogEntity() {
+    }
+
+    public LogEntity(String remoteAddr, String remoteUser, String timeLocal, String request, String status, String bytesSent, String httpReferer, String httpUserAgent) {
         this.remoteAddr = remoteAddr;
         this.remoteUser = remoteUser;
         this.timeLocal = timeLocal;
@@ -32,7 +37,27 @@ public class LogEntity {
         this.bytesSent = bytesSent;
         this.httpReferer = httpReferer;
         this.httpUserAgent = httpUserAgent;
-        this.httpXForwardedFor = httpXForwardedFor;
+    }
+
+
+    @Override
+    public String toString() {
+        return "LogEntity{" +
+                "id=" + id +
+                ", remoteAddr='" + remoteAddr + '\'' +
+                ", remoteUser='" + remoteUser + '\'' +
+                ", timeLocal='" + timeLocal + '\'' +
+                ", request='" + request + '\'' +
+                ", status='" + status + '\'' +
+                ", bytesSent='" + bytesSent + '\'' +
+                ", httpReferer='" + httpReferer + '\'' +
+                ", httpUserAgent='" + httpUserAgent + '\'' +
+                '}';
+    }
+
+    public void mapping(ChunkEntity chunkEntity) {
+        this.chunkEntity = chunkEntity;
+        chunkEntity.getLogEntity().add(this);
     }
 }
 
