@@ -18,7 +18,9 @@ public class LogEntity {
     private String request;
     private String status;
     private String bytesSent;
+    @Lob
     private String httpReferer;
+    @Lob
     private String httpUserAgent;
 
     @ManyToOne(fetch = FetchType.LAZY)
