@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.job.builder.JobBuilder;
+import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemProcessor;
@@ -27,7 +28,7 @@ import java.util.regex.Pattern;
 @Configuration
 @RequiredArgsConstructor
 public class LogBatch {
-    private static final String LOG_PATH = "/Users/kwonjeonghyeon/git-file/access_1.log";
+    private static final String LOG_PATH = "/Users/kwonjeonghyeon/git-file/access_3.log";
     private final JobRepository jobRepository;
     private final LogEntityRepository logEntityRepository;
     private final ChunkEntityRepository chunkEntityRepository;
@@ -37,6 +38,7 @@ public class LogBatch {
     @Bean
     public Job processFileJob() {
         return new JobBuilder("processFileJob", jobRepository)
+                .incrementer(new RunIdIncrementer())
                 .start(splitFileStep())
                 .build();
     }
