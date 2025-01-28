@@ -3,3 +3,5 @@ logs/*
 front-end/node_modules
 front-end/package-lock.json
 NOTE.md
+
+elastic-data

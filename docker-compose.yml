@@ -1,11 +1,58 @@
 version: "3"
 
+# 8.7.1
+
 services:
-  web:
-    image: nginx:1.26.2
+  # web:
+  #   image: nginx:1.26.2
+  #   ports:
+  #     - "80:80"
+  #   volumes:
+  #     - ./html:/usr/share/nginx/html
+  #     - ./nginx.conf:/etc/nginx/nginx.conf
+  #     - ./logs:/var/log/nginx
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.7.1
+    container_name: elasticsearch_01
     ports:
-      - "80:80"
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      - discovery.type=single-node
+      - cluster.name=my-cluster
+      - node.name=my-node-1
+      - ELASTIC_USERNAME=elastic
+      - ELASTIC_PASSWORD=changeme
+      - xpack.security.enabled=false
     volumes:
-      - ./html:/usr/share/nginx/html
-      - ./nginx.conf:/etc/nginx/nginx.conf
-      - ./logs:/var/log/nginx
+      - ./elastic-data:/usr/share/elasticsearch/data
+    networks:
+      - elastic-network
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.7.1
+    container_name: kibana
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch_01:9200
+      - ELASTICSERCH_URL=http://elasticsearch_01:9200
+    depends_on:
+      - elasticsearch
+    networks:
+      - elastic-network
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.7.1
+    volumes:
+      - ./logs/access.log:/usr/share/logstash/access.log
+      - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+    ports:
+      - 5044:5044
+    depends_on:
+      - elasticsearch
+    networks:
+      - elastic-network
+    # restart: unless-stopped
+
+networks:
+  elastic-network:
+    driver: bridge
